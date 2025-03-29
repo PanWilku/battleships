@@ -4,31 +4,31 @@ import { Ship, Carrier, Battleship, Crusier, Submarine, PatrolBoat } from "./shi
 test('carrier initializes with proper length and name', () => {
     const ship = new Carrier();
     expect(ship.length).toBe(5);
-    expect(ship.shipName).toBe("This ship is a Carrier");
+    expect(ship.name).toBe("Carrier");
 });
 
 test('battleship initializes with proper length and name', () => {
     const ship = new Battleship();
     expect(ship.length).toBe(4);
-    expect(ship.shipName).toBe("This ship is a Battleship");
+    expect(ship.name).toBe("Battleship");
 });
 
 test('crusier initializes with proper length and name', () => {
     const ship = new Crusier();
     expect(ship.length).toBe(3);
-    expect(ship.shipName).toBe("This ship is a Crusier");
+    expect(ship.name).toBe("Crusier");
 });
 
 test('submarine initializes with proper length and name', () => {
     const ship = new Submarine();
     expect(ship.length).toBe(3);
-    expect(ship.shipName).toBe("This ship is a Submarine");
+    expect(ship.name).toBe("Submarine");
 });
 
 test('patrol boat initializes with proper length and name', () => {
     const ship = new PatrolBoat();
     expect(ship.length).toBe(2);
-    expect(ship.shipName).toBe("This ship is a Patrol Boat");
+    expect(ship.name).toBe("Patrol Boat");
 });
 
 

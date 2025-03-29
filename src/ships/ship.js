@@ -1,6 +1,6 @@
 export class Ship {
     constructor(name) {
-        this.shipName = `This ship is a ${name}`;
+        this.name = name;
         this.hits = 0;
     }
 
