@@ -3,18 +3,42 @@ export class Gameboard {
         this.ships = [];
         this.missedAttacks = [];
         this.attackedCoordinates = [];
+        this.size = this.createBoard();
+    }
+
+    createBoard() {
+        const numbersX = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10];
+        let gameboard = [];
+
+        for(const letter of numbersX) {
+            for(let i = 1; i <= numbersX.length; i++) {
+            gameboard.push([letter, i]);
+            }
+        }
+        return gameboard;
     }
 
     placeShip(ship, coordinates, position) {
         let shipCoordinates = [];
+        let tempCords = [];
         const [x, y] = coordinates;
         for(let i = 0; i < ship.length; i++) {
             if(position === "horizontally") {
-                shipCoordinates.push([x + i, y]);
+
+                tempCords.push([x + i, y]);
             } else if(position === "vertically") {
-                shipCoordinates.push([x, y + i]);
+                tempCords.push([x, y + i]);
             }
         }
+
+        for(const cord of tempCords) {
+            if(cord[0] > 10 || cord[1] > 10) {
+
+                return "You can't position ships outside the map!";
+            }
+        }
+
+        shipCoordinates = tempCords;
 
         this.ships.push({ship, coordinates: shipCoordinates});
     }
