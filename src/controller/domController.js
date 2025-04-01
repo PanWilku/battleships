@@ -266,72 +266,106 @@ function addScoreboardDOM(player, computer) {
 
 
 function handleReceiveAttackPlayer(coordinates) {
+    return new Promise((resolve) => {
+        const [x, y] = coordinates;
+        const cellId = `[p: ${x}, ${y}]`;
+        const cellToChange = document.getElementById(cellId);
 
-  const [x, y] = coordinates;
-  const cellId = `[p: ${x}, ${y}]`;
-  const cellToChange = document.getElementById(cellId);
-  player.gameboard.attackedCoordinates.forEach((coordinate) => {
-    if (coordinate[0] === x && coordinate[1] === y) {
-      if(player.gameboard.ships.some(ship => ship.coordinates.some(coord => coord[0] === x && coord[1] === y))) {
+        if (!cellToChange) {
+            console.error(`Cell ${cellId} not found`);
+            resolve(false);
+            return;
+        }
+
+        // Check if it was a hit
+        const wasHit = gameController.getPlayer().gameboard.ships.some(ship => 
+            ship.coordinates.some(coord => 
+                coord[0] === x && coord[1] === y
+            )
+        );
+
+        // Update cell appearance
         cellToChange.classList.remove("bg-white", "hover:bg-blue-200");
-        cellToChange.classList.add("bg-red-500");
-      } else {
-        cellToChange.classList.remove("bg-white", "hover:bg-blue-200");
-        cellToChange.classList.add("bg-blue-500");
-      }
-    }
-  })
-  return "computer"
+        cellToChange.classList.add(wasHit ? "bg-red-500" : "bg-blue-500");
+
+        resolve(true);
+    });
 }
-
 
 function handleReceiveAttackComputer(computer) {
-
-    const computerBoard = document.getElementById("computer-board");
-    
-    // Remove existing event listeners if any
-    const newBoard = computerBoard.cloneNode(true);
-    computerBoard.parentNode.replaceChild(newBoard, computerBoard);
-
-    // Add click handlers to all cells
-    for(let i = 1; i <= 10; i++) {
-      for(let j = 1; j <= 10; j++) {
-        const cellId = `[c: ${i}, ${j}]`;
-        const cell = document.getElementById(cellId);
+    return new Promise((resolve) => {
+        const computerBoard = document.getElementById("computer-board");
         
-        if (!cell) continue;
+        // Remove existing event listeners
+        const newBoard = computerBoard.cloneNode(true);
+        computerBoard.parentNode.replaceChild(newBoard, computerBoard);
 
-        cell.addEventListener("click", (e) => {
-          const x = i;
-          const y = j;
+        // Add click handlers to all cells
+        for(let i = 1; i <= 10; i++) {
+            for(let j = 1; j <= 10; j++) {
+                const cellId = `[c: ${i}, ${j}]`;
+                const cell = document.getElementById(cellId);
+                
+                if (!cell) continue;
 
-          // Make the attack
-          computer.gameboard.receiveAttack([x, y]);
+                cell.addEventListener("click", (e) => {
+                    const x = i;
+                    const y = j;
 
-          // Check if it was a hit
-          const wasHit = computer.gameboard.ships.some(ship => 
-            ship.coordinates.some(coord => 
-              coord[0] === x && coord[1] === y
-            )
-          );
+                    // Check if already attacked
+                    if (computer.gameboard.attackedCoordinates.some(coord => 
+                        coord[0] === x && coord[1] === y)) {
+                        alert("You already attacked this position!");
+                        return;
+                    }
 
-          // Update cell appearance
-          cell.classList.remove("bg-white", "hover:bg-blue-200");
-          cell.classList.add(wasHit ? "bg-red-500" : "bg-blue-500");
-        });
-      }
-    }
-    return "player";
+                    // Make the attack
+                    computer.gameboard.receiveAttack([x, y]);
+
+                    // Check if it was a hit
+                    const wasHit = computer.gameboard.ships.some(ship => 
+                        ship.coordinates.some(coord => 
+                            coord[0] === x && coord[1] === y
+                        )
+                    );
+
+                    // Update cell appearance
+                    cell.classList.remove("bg-white", "hover:bg-blue-200");
+                    cell.classList.add(wasHit ? "bg-red-500" : "bg-blue-500");
+
+                    resolve(true);
+                });
+            }
+        }
+    });
 }
 
+function updateScoreboard() {
+    const player = gameController.getPlayer();
+    const computer = gameController.getComputer();
 
+    const playerScoreboard = document.getElementById("player-scoreboard");
+    const computerScoreboard = document.getElementById("computer-scoreboard");
 
+    if (playerScoreboard && computerScoreboard) {
+        playerScoreboard.innerHTML = `
+            <h2 class="text-2xl font-bold mb-4">Player Scoreboard</h2>
+            <p>Ships Remaining: ${player.gameboard.ships.length}</p>
+            <p>Score: ${player.score}</p>
+        `;
 
+        computerScoreboard.innerHTML = `
+            <h2 class="text-2xl font-bold mb-4">Computer Scoreboard</h2>
+            <p>Ships Remaining: ${computer.gameboard.ships.length}</p>
+            <p>Score: ${computer.score}</p>
+        `;
+    }
+}
 
 export const domController = {
   InitialRender,
   addScoreboardDOM,
   handleReceiveAttackPlayer,
   handleReceiveAttackComputer,
-  // add more functions as needed
+  updateScoreboard
 };

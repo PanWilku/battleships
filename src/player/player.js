@@ -4,7 +4,7 @@ export class Player {
     constructor(type) {
         this.type = type;
         this.gameboard = new Gameboard();
-        this.score = 0;
+        this.score =  Number(localStorage.getItem(`${type}Score`)) || 0;;
     }
 
 
@@ -13,11 +13,17 @@ export class Player {
     }
 
 
-    makeRandomMove(target) {
-        const randomCords = this.getRandomMove();
+    makeRandomMove(opponent) {
+        let x, y;
+        do {
+            x = Math.floor(Math.random() * 10) + 1;
+            y = Math.floor(Math.random() * 10) + 1;
+        } while (opponent.gameboard.attackedCoordinates.some(
+            coord => coord[0] === x && coord[1] === y
+        ));
 
-        target.gameboard.receiveAttack(randomCords);
-        return randomCords;
+        opponent.gameboard.receiveAttack([x, y]);
+        return [x, y];
     }
 
     getRandomMove() {
