@@ -3,8 +3,9 @@ import carrier from "../battleships/Carrier.png";
 import crusier from "../battleships/Cruiser.png";
 import patrolBoat from "../battleships/PatrolBoat.png";
 import submarine from "../battleships/Submarine.png";
+import { gameController } from "./gameController.js";
+import {Carrier, Battleship, Crusier, Submarine, PatrolBoat} from "../ships/ship.js";
 
-import {Carrier} from "../ships/ship.js";
 
 
 
@@ -40,11 +41,11 @@ const availableShipsWindowC = document.getElementById('available-ships-window-c'
 
 
 availableShipsWindowP.innerHTML = `
-  <img src="${carrier}" alt="Carrier" class="h-16 w-64" draggable="true" data-ship="carrier" data-size="5">
-  <img src="${battleship}" alt="Battleship" class="h-16 w-64" draggable="true" data-ship="battleship" data-size="4">
-  <img src="${crusier}" alt="Cruiser" class="h-16 w-64" draggable="true" data-ship="cruiser" data-size="3">
-  <img src="${submarine}" alt="Submarine" class="h-16 w-64" draggable="true" data-ship="submarine" data-size="3">
-  <img src="${patrolBoat}" alt="Patrol Boat" class="h-16 w-64" draggable="true" data-ship="patrolBoat" data-size="2">
+  <img src="${carrier}" alt="Carrier" class="h-16 w-64" draggable="true" data-ship="carrier" data-size="5" id="carrier">
+  <img src="${battleship}" alt="Battleship" class="h-16 w-64" draggable="true" data-ship="battleship" data-size="4" id="battleship">
+  <img src="${crusier}" alt="Cruiser" class="h-16 w-64" draggable="true" data-ship="cruiser" data-size="3" id="cruiser">
+  <img src="${submarine}" alt="Submarine" class="h-16 w-64" draggable="true" data-ship="submarine" data-size="3" id="submarine">
+  <img src="${patrolBoat}" alt="Patrol Boat" class="h-16 w-64" draggable="true" data-ship="patrolboat" data-size="2" id="patrolboat">
 `;
 handleAddEventListenersDragStart(availableShipsWindowP);
 
@@ -105,40 +106,58 @@ function handleAddEventListenersDragOver(cell) {
     });
     cell.addEventListener('drop', (e) => {
         e.preventDefault();
-        let coordsToPlace = [];
 
-        const ship = e.dataTransfer.getData('ship');
-        const size = e.dataTransfer.getData('size');
+        const player = gameController.getPlayer();
+        const gameboard = player.gameboard;
+
+        const shipName = e.dataTransfer.getData('ship');
+        const shipSize = e.dataTransfer.getData('size');
         //extract row and col
         const id = cell.id;
         const row = parseInt(id.split(':')[1].split(',')[0]);
         const col = parseInt(id.split(':')[1].split(',')[1]);
         
-        let cellToChangeArr = [];
-        for(let i = 0; i < size; i++) {
-            
-            const cellId = `[p: ${row}, ${col + i}]`;
-            const cellToChange = document.getElementById(cellId);
-            if(!cellToChange) {
-                console.log("You can't position ships outside the map!");
-                cellToChangeArr.forEach((cellId) => {
-                    const cellToChange = document.getElementById(cellId);
-                    cellToChange.classList.remove("bg-green-400");
-                    cellToChange.classList.add("bg-white", "hover:bg-blue-200");
-                });
-                return;
-            }
-            cellToChangeArr.push(cellId); 
-            coordsToPlace.push([row, col + i]);
+
+        const coordinates = [];
+
+        for(let i = 0; i < shipSize; i++) {
+            coordinates.push([row, col + i]);
         }
-        cellToChangeArr.forEach((cellId) => {
-            const cellToChange = document.getElementById(cellId);
+
+    // Validate and place the ship on the gameboard
+    const shipClassMap = {
+        carrier: Carrier,
+        battleship: Battleship,
+        cruiser: Crusier,
+        submarine: Submarine,
+        patrolboat: PatrolBoat,
+    };
+
+    const ShipClass = shipClassMap[shipName.toLowerCase()];
+    const ship = new ShipClass();
+
+    const result = gameboard.placeShip(ship, [row, col], "horizontally"); // Default to horizontal placement
+    if (result === "You can't position ships outside the map!") {
+        alert("Invalid placement! Try again.");
+        return;
+    }
+
+    coordinates.forEach(([x, y]) => {
+        const cellId = `[p: ${x}, ${y}]`;
+        const cellToChange = document.getElementById(cellId);
+        if (cellToChange) {
             cellToChange.classList.remove("bg-white", "hover:bg-blue-200");
             cellToChange.classList.add("bg-green-400");
-        });
+        }});
 
-        console.log(`${ship} placed at ${row}, ${col}`);
+    const img = document.getElementById(shipName);
+    if(img && img.parentNode) {
+        img.parentNode.removeChild(img);
+    }
+
     });
+
+
 }
 
 
