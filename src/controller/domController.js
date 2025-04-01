@@ -9,6 +9,7 @@ import { Carrier, Battleship, Crusier, Submarine, PatrolBoat } from "../ships/sh
 // Global variables to store the dragged ship and preview cells
 let draggedShip = null;
 let lastPreviewCells = [];
+let placedShips = 0;
 
 /**
  * Updates preview styling on cells.
@@ -150,7 +151,13 @@ function handleAddEventListenersDragOver(cell) {
       newPreviewCells.push(newId);
     }
     updatePreview(newPreviewCells);
+
+
   });
+
+
+
+
 
   // Drop event: place ship and finalize styling.
   cell.addEventListener("drop", (e) => {
@@ -212,7 +219,14 @@ function handleAddEventListenersDragOver(cell) {
 
     // Clear preview styling once the drop is complete.
     updatePreview([]);
+    //starts battle after placing ships.
+    if (player.gameboard.ships.length === 5) {
+      gameController.battleStart();
+    }
   });
+
+
+
 }
 
 // Clear preview styles on dragend so that no cells remain highlighted.
@@ -227,7 +241,32 @@ document.addEventListener("dragend", () => {
   lastPreviewCells = [];
 });
 
+
+function addScoreboardDOM(player, computer) {
+  const playerScoreboard = document.createElement("div");
+  playerScoreboard.id = "player-scoreboard";
+  playerScoreboard.className = "text-white text-lg";
+  playerScoreboard.innerHTML = `
+    <h2 class="text-2xl font-bold mb-4">Player Scoreboard</h2>
+    <p>Ships Remaining: ${player.gameboard.ships.length}</p>
+    <p>Score: ${player.score}</p>
+  `;
+  document.getElementById("player-window").appendChild(playerScoreboard);
+
+  const computerScoreboard = document.createElement("div");
+  computerScoreboard.id = "computer-scoreboard";
+  computerScoreboard.className = "text-white text-lg";
+  computerScoreboard.innerHTML = `
+    <h2 class="text-2xl font-bold mb-4">Computer Scoreboard</h2>
+    <p>Ships Remaining: ${computer.gameboard.ships.length}</p>
+    <p>Score: ${computer.score}</p>
+  `;
+  document.getElementById("computer-window").appendChild(computerScoreboard);
+}
+
+
 export const domController = {
   InitialRender,
+  addScoreboardDOM
   // add more functions as needed
 };
