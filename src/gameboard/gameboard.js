@@ -39,8 +39,17 @@ export class Gameboard {
             }
         }
 
-        shipCoordinates = tempCords;
+        for(const ship of this.ships) {
+            for(const cord of ship.coordinates) {
+                if(tempCords.some((tempCord) => {
+                    return tempCord[0] === cord[0] && tempCord[1] === cord[1];
+                })) {
+                    return "You can't position ships on top of each other!";
+                }
+            }
+        }
 
+        shipCoordinates = tempCords;
         this.ships.push({ship, coordinates: shipCoordinates});
         return shipCoordinates;
     }
