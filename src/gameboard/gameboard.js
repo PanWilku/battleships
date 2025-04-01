@@ -55,6 +55,8 @@ export class Gameboard {
     }
 
 
+
+
     receiveAttack(coordinates) {
 
         const alreadyAttacked = this.attackedCoordinates.some((coordinate) => {
@@ -62,7 +64,7 @@ export class Gameboard {
         });
 
         if(alreadyAttacked) {
-            return "You cant attack same coordinate twice!";
+            return alert("You cant attack same coordinate twice!");
         }
 
         this.attackedCoordinates.push(coordinates);

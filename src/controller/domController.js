@@ -265,8 +265,73 @@ function addScoreboardDOM(player, computer) {
 }
 
 
+function handleReceiveAttackPlayer(coordinates) {
+
+  const [x, y] = coordinates;
+  const cellId = `[p: ${x}, ${y}]`;
+  const cellToChange = document.getElementById(cellId);
+  player.gameboard.attackedCoordinates.forEach((coordinate) => {
+    if (coordinate[0] === x && coordinate[1] === y) {
+      if(player.gameboard.ships.some(ship => ship.coordinates.some(coord => coord[0] === x && coord[1] === y))) {
+        cellToChange.classList.remove("bg-white", "hover:bg-blue-200");
+        cellToChange.classList.add("bg-red-500");
+      } else {
+        cellToChange.classList.remove("bg-white", "hover:bg-blue-200");
+        cellToChange.classList.add("bg-blue-500");
+      }
+    }
+  })
+  return "computer"
+}
+
+
+function handleReceiveAttackComputer(computer) {
+
+    const computerBoard = document.getElementById("computer-board");
+    
+    // Remove existing event listeners if any
+    const newBoard = computerBoard.cloneNode(true);
+    computerBoard.parentNode.replaceChild(newBoard, computerBoard);
+
+    // Add click handlers to all cells
+    for(let i = 1; i <= 10; i++) {
+      for(let j = 1; j <= 10; j++) {
+        const cellId = `[c: ${i}, ${j}]`;
+        const cell = document.getElementById(cellId);
+        
+        if (!cell) continue;
+
+        cell.addEventListener("click", (e) => {
+          const x = i;
+          const y = j;
+
+          // Make the attack
+          computer.gameboard.receiveAttack([x, y]);
+
+          // Check if it was a hit
+          const wasHit = computer.gameboard.ships.some(ship => 
+            ship.coordinates.some(coord => 
+              coord[0] === x && coord[1] === y
+            )
+          );
+
+          // Update cell appearance
+          cell.classList.remove("bg-white", "hover:bg-blue-200");
+          cell.classList.add(wasHit ? "bg-red-500" : "bg-blue-500");
+        });
+      }
+    }
+    return "player";
+}
+
+
+
+
+
 export const domController = {
   InitialRender,
-  addScoreboardDOM
+  addScoreboardDOM,
+  handleReceiveAttackPlayer,
+  handleReceiveAttackComputer,
   // add more functions as needed
 };

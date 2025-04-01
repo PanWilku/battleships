@@ -5,7 +5,7 @@ import { Carrier, Battleship, Crusier, Submarine, PatrolBoat } from "../ships/sh
 let player;
 let computer;
 let turn = "player";
-let gameOver = false;
+let isGameOver = false;
 
 function startGame() {
     // Initialize players
@@ -31,6 +31,23 @@ function battleStart() {
     console.log("Battle started!");
     placeComputerShips(computer);
     domController.addScoreboardDOM(getPlayer(), getComputer());
+    while(!isGameOver) {
+    if(turn === "player") {
+        turn = domController.handleReceiveAttackComputer(getComputer());
+          // Check if game is over
+        if (computer.gameboard.areAllShipsSunk()) {
+            isGameOver = true;
+            gameOver(player);
+        }
+    } else {
+        const result = computer.makeRandomMove(getPlayer());
+        turn = domController.handleReceiveAttackPlayer(result);
+        if (player.gameboard.areAllShipsSunk()) {
+            isGameOver = true;
+            gameOver(computer);
+        }
+    }
+    }
 }
 
 
@@ -63,14 +80,21 @@ function placeComputerShips(computer) {
                 }
             }
         });
-        console.log(computer.gameboard.ships[0].coordinates);
-        console.log(computer.gameboard.ships[1].coordinates);
-        console.log(computer.gameboard.ships[2].coordinates);
-        console.log(computer.gameboard.ships[3].coordinates);
-        console.log(computer.gameboard.ships[4].coordinates);
 
 }
 
+
+function gameOver(winner) {
+    const gameOverMessage = document.createElement("div");
+    gameOverMessage.className = "absolute top-0 left-0 w-full h-full bg-black bg-opacity-50 flex flex-col items-center justify-center text-white text-4xl";
+    gameOverMessage.innerHTML = `
+      <h1>${winner} Wins!</h1>
+      <button class="mt-4 bg-blue-500 text-white px-4 py-2 rounded text-2xl" onclick="location.reload()">
+        Play Again
+      </button>
+    `;
+    document.body.appendChild(gameOverMessage);
+  }
 
 export const gameController = {
     startGame,

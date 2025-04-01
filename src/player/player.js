@@ -17,6 +17,7 @@ export class Player {
         const randomCords = this.getRandomMove();
 
         target.gameboard.receiveAttack(randomCords);
+        return randomCords;
     }
 
     getRandomMove() {
