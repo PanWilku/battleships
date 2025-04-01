@@ -25,9 +25,10 @@ export class Gameboard {
         for(let i = 0; i < ship.length; i++) {
             if(position === "horizontally") {
 
-                tempCords.push([x + i, y]);
-            } else if(position === "vertically") {
                 tempCords.push([x, y + i]);
+            } else if(position === "vertically") {
+
+                tempCords.push([x + i, y]);
             }
         }
 
@@ -41,6 +42,7 @@ export class Gameboard {
         shipCoordinates = tempCords;
 
         this.ships.push({ship, coordinates: shipCoordinates});
+        return shipCoordinates;
     }
 
 
