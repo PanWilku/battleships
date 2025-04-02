@@ -46,27 +46,27 @@ function updatePreview(newPreviewCells) {
  */
 function InitialRender() {
   const gameWindow = document.getElementById("game-window");
-  gameWindow.className = "flex w-full bg-gray-800 h-screen";
+  gameWindow.className = "flex flex-col min-h-screen md:flex-row flex-col w-full h-full";
 
   // Player window setup
   const playerWindow = document.createElement("div");
   playerWindow.id = "player-window";
-  playerWindow.className = "flex flex-col w-full h-full bg-rose-500 items-center pt-20";
+  playerWindow.className = "flex flex-col w-full h-full  items-center pt-20";
   gameWindow.appendChild(playerWindow);
   playerWindow.innerHTML = `
-    <h2 class="text-2xl font-bold mb-4">Player</h2>
-    <div id="available-ships-window-p" class="grid grid-cols-2 gap-4 w-2/4 h-64 border-2 border-amber-200"></div>
+    <h2 class="text-2xl font-bold mb-4 text-indigo-500">Player</h2>
+    <div id="available-ships-window-p" class="grid grid-cols-2 gap-4 w-3/4 lg:w-2/4 h-64 border-10 border-indigo-500 rounded-xl"></div>
     <div id="player-board"></div>
   `;
 
   // Computer window setup
   const computerWindow = document.createElement("div");
   computerWindow.id = "computer-window";
-  computerWindow.className = "flex flex-col w-full h-full bg-blue-500 items-center pt-20";
+  computerWindow.className = "flex flex-col w-full h-full items-center pt-20";
   gameWindow.appendChild(computerWindow);
   computerWindow.innerHTML = `
-    <h2 class="text-2xl font-bold mb-4">Computer</h2>
-    <div id="available-ships-window-c" class="grid grid-cols-2 gap-4 w-2/4 h-64 border-2 border-amber-200"></div>
+    <h2 class="text-2xl font-bold mb-4 text-rose-700">Computer</h2>
+    <div id="available-ships-window-c" class="grid grid-cols-2 gap-4  w-3/4 lg:w-2/4 h-64 border-10 border-rose-700 rounded-xl"></div>
     <div id="computer-board"></div>
   `;
 
@@ -93,12 +93,12 @@ function InitialRender() {
 
   // Build player board grid
   const playerBoard = document.getElementById("player-board");
-  playerBoard.className = "grid grid-cols-10 gap-0 p-10 min-w-max";
+  playerBoard.className = "flex grid grid-cols-10 gap-0 p-10";
   for (let i = 0; i < 10; i++) {
     for (let j = 0; j < 10; j++) {
       const cell = document.createElement("div");
       cell.id = `[p: ${i + 1}, ${j + 1}]`;
-      cell.className = "aspect-square border-2 border-black w-16 h-16 bg-white hover:bg-blue-200";
+      cell.className = "flex border-2 border-black min-w-[32px] min-h-[32px] lg:min-w-[54px] lg:min-h-[54px] bg-white hover:bg-blue-200";
       handleAddEventListenersDragOver(cell);
       playerBoard.appendChild(cell);
     }
@@ -106,12 +106,12 @@ function InitialRender() {
 
   // Build computer board grid
   const computerBoard = document.getElementById("computer-board");
-  computerBoard.className = "grid grid-cols-10 gap-0 p-10 min-w-max";
+  computerBoard.className = "grid grid-cols-10 gap-0 p-10";
   for (let i = 0; i < 10; i++) {
     for (let j = 0; j < 10; j++) {
       const cell = document.createElement("div");
       cell.id = `[c: ${i + 1}, ${j + 1}]`;
-      cell.className = "aspect-square border-2 border-black w-16 h-16 bg-white hover:bg-blue-200";
+      cell.className = "flex border-2 border-black min-w-[32px] min-h-[32px] lg:min-w-[54px] lg:min-h-[54px] bg-white hover:bg-blue-200";
       computerBoard.appendChild(cell);
     }
   }
@@ -245,7 +245,7 @@ document.addEventListener("dragend", () => {
 function addScoreboardDOM(player, computer) {
   const playerScoreboard = document.createElement("div");
   playerScoreboard.id = "player-scoreboard";
-  playerScoreboard.className = "text-white text-lg";
+  playerScoreboard.className = "text-lg";
   playerScoreboard.innerHTML = `
     <h2 class="text-2xl font-bold mb-4">Player Scoreboard</h2>
     <p>Ships Remaining: ${player.gameboard.ships.length}</p>
@@ -255,7 +255,7 @@ function addScoreboardDOM(player, computer) {
 
   const computerScoreboard = document.createElement("div");
   computerScoreboard.id = "computer-scoreboard";
-  computerScoreboard.className = "text-white text-lg";
+  computerScoreboard.className = "text-lg";
   computerScoreboard.innerHTML = `
     <h2 class="text-2xl font-bold mb-4">Computer Scoreboard</h2>
     <p>Ships Remaining: ${computer.gameboard.ships.length}</p>
